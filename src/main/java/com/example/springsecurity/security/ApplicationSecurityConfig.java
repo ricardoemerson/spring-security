@@ -1,7 +1,7 @@
 package com.example.springsecurity.security;
 
-
 import com.example.springsecurity.auth.ApplicationUserService;
+import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +29,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final ApplicationUserService applicationUserService;
 
-    // public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService) {
-    //     this.passwordEncoder = passwordEncoder;
-    //     this.applicationUserService = applicationUserService;
-    // }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -41,6 +36,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 // .antMatchers("/api/**").hasRole(STUDENT.name())

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
+import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Autowired
     private final AuthenticationManager authenticationManager;
 
+    @Autowired
+    private final JwtConfig jwtConfig;
+
+    @Autowired
+    private final SecretKey secretKey;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -47,7 +54,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
-        String key = "S3cur3@4s1mn1-S3cur3@4s1mn1-S3cur3@4s1mn1-S3cur3@4s1mn1-S3cur3@4s1mn1-S3cur3@4s1mn1";
+        String key = "";
 
         String token = Jwts.builder()
                         .setSubject(authResult.getName())
