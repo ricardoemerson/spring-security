@@ -1,6 +1,9 @@
 package com.example.springsecurity.security;
 
+import javax.crypto.SecretKey;
+
 import com.example.springsecurity.auth.ApplicationUserService;
+import com.example.springsecurity.jwt.JwtConfig;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
@@ -29,14 +32,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final ApplicationUserService applicationUserService;
 
+    @Autowired
+    private final JwtConfig jwtConfig;
+
+    @Autowired
+    private final SecretKey secretKey;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
-            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig,
+                        secretKey))
+            .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey),
+                        JwtUsernameAndPasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 // .antMatchers("/api/**").hasRole(STUDENT.name())
