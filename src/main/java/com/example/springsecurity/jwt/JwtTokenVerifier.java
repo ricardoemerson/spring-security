@@ -45,7 +45,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         }
 
         String token = authorizationHeader.replace(String.format("%s ", jwtConfig.getTokenPrefix()), "");
-        System.out.println(token);
 
         try {
 
